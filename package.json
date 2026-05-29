@@ -1,0 +1,18 @@
+{
+  "name": "pfe",
+  "version": "1.0.0",
+  "description": "Fullstack FitTracker Workspace",
+  "scripts": {
+    "start": "npm run start:fittracker",
+    "start:backend": "cd backend && npm run dev",
+    "start:fittracker": "cd fittracker- && npm start",
+    "dev": "concurrently -n BACKEND,EXPO -c green,blue \"npm run start:backend\" \"npm run start:fittracker\"",
+    "seed": "cd backend && npm run data:import"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "expo": "^55.0.25"
+  }
+}

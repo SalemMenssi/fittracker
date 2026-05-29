@@ -1,0 +1,50 @@
+// User Model
+// Represents the authenticated user profile
+
+export const createUser = ({
+  id = Date.now().toString(),
+  fullName = "",
+  email = "",
+  password = "",
+  phone = "",
+  dateOfBirth = "",
+  gender = "",
+  location = "",
+  age = "25",
+  weight = "70",
+  height = "175",
+  unit = "metric", // "metric" or "imperial"
+  avatar = "https://randomuser.me/api/portraits/men/32.jpg",
+  level = "Beginner",
+  joinDate = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+  isPro = false,
+  points = 0,
+  coursesCompleted = 0,
+  dayStreak = 0,
+  timeSpentHours = 0,
+  weeklyGoalPercent = 0,
+} = {}) => ({
+  id,
+  fullName,
+  email,
+  password,
+  phone,
+  dateOfBirth,
+  gender,
+  location,
+  age,
+  weight,
+  height,
+  unit,
+  avatar,
+  level,
+  joinDate,
+  isPro,
+  points,
+  coursesCompleted,
+  dayStreak,
+  timeSpentHours,
+  weeklyGoalPercent,
+});
+
+export default createUser;
