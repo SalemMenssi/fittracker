@@ -47,9 +47,6 @@ export const ROUTES = {
   PRIVACY_SECURITY: 'PrivacySecurity',
   STATS: 'Stats',
 
-  // Legal
-  TERMS: 'Terms',
-
   // Admin tabs
   ADMIN_USERS: 'AdminUsers',
   ADMIN_MANAGE: 'AdminManage',

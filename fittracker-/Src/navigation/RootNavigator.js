@@ -29,8 +29,6 @@ import PersonalInfoScreen from '../screens/profile/PersonalInfoScreen';
 import NotificationsScreen from '../screens/profile/NotificationsScreen';
 import PrivacySecurityScreen from '../screens/profile/PrivacySecurityScreen';
 import StatsScreen from '../screens/profile/StatsScreen';
-import TermsScreen from '../screens/legal/TermsScreen';
-
 const Stack = createStackNavigator();
 
 export default function RootNavigator({ initialRouteName }) {
@@ -70,7 +68,6 @@ export default function RootNavigator({ initialRouteName }) {
       <Stack.Screen name={ROUTES.NOTIFICATIONS} component={NotificationsScreen} />
       <Stack.Screen name={ROUTES.PRIVACY_SECURITY} component={PrivacySecurityScreen} />
       <Stack.Screen name={ROUTES.STATS} component={StatsScreen} />
-      <Stack.Screen name={ROUTES.TERMS} component={TermsScreen} />
     </Stack.Navigator>
   );
 }

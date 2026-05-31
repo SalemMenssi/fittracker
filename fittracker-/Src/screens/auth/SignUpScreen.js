@@ -186,12 +186,6 @@ export default function SignUpScreen() {
             </Text>
           </Text>
 
-          {/* Terms */}
-          <Text style={styles.terms}>
-            By creating an account, you agree to our Terms of Service and Privacy Policy.{"\n"}
-            FitTracker ensures your data is encrypted and secure.
-          </Text>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -327,11 +321,5 @@ const styles = StyleSheet.create({
   signinLink: {
     color: "#00c2c2",
     fontWeight: "600",
-  },
-  terms: {
-    textAlign: "center",
-    fontSize: 10,
-    color: "#bbb",
-    lineHeight: 16,
   },
 });

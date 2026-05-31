@@ -40,13 +40,17 @@ export default function SocialScreen({ navigation }) {
   }, [isFocused]);
 
   const handleLike = async (postId) => {
-    if (!user) return;
-    const updated = await toggleLike(postId);
-    // Since toggleLike now returns the updated post, we need to refresh the whole list
-    // or update just that post in the state. 
-    // To match current logic simply, let's refresh all posts.
-    const allPosts = await getAllPosts();
-    setPosts(allPosts);
+    if (!user || !postId) return;
+    try {
+      await toggleLike(postId);
+      setPosts(await getAllPosts());
+    } catch (_) {}
+  };
+
+  const userId = user?._id || user?.id;
+  const isLikedByMe = (post) => {
+    if (!userId) return false;
+    return (post.likes || []).some((id) => String(id) === String(userId));
   };
 
   const pickPostImage = async () => {
@@ -79,8 +83,6 @@ export default function SocialScreen({ navigation }) {
       setPublishing(false);
     }
   };
-
-  const isLikedByMe = (post) => user && (post.likes || []).includes(user._id);
 
   if (loading) {
     return (
@@ -171,40 +173,38 @@ export default function SocialScreen({ navigation }) {
 
         {/* Feed */}
         {posts.map((post) => {
+          const postId = post.id || post._id;
           const liked = isLikedByMe(post);
-          const hasSeedId = typeof post.id === "string" && post.id.startsWith("seed");
-          const likeCount = (post.likes || []).length + (hasSeedId ? (
-            post.id === "seed1" ? 24 : post.id === "seed2" ? 18 : 41
-          ) : 0);
+          const likeCount = (post.likes || []).length;
 
           return (
-            <View key={post.id || Math.random().toString()} style={styles.card}>
+            <View key={String(postId)} style={styles.card}>
               <View style={styles.postHeader}>
                 <Image source={{ uri: post.avatar }} style={styles.postAvatar} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.postName}>{post.name}</Text>
-                  <Text style={styles.postTime}>{post.time}</Text>
+                  <Text style={styles.postName}>{String(post.name || 'User')}</Text>
+                  <Text style={styles.postTime}>{String(post.time || '')}</Text>
                 </View>
                 <Ionicons name="ellipsis-horizontal" size={20} color="#ccc" />
               </View>
-              <Text style={styles.postText}>{post.text}</Text>
-              {post.image && (
+              <Text style={styles.postText}>{String(post.text || '')}</Text>
+              {post.image ? (
                 <Image source={{ uri: post.image }} style={styles.postImage} />
-              )}
+              ) : null}
               <View style={styles.postActions}>
-                <TouchableOpacity style={styles.actionBtn} onPress={() => handleLike(post.id)}>
+                <TouchableOpacity style={styles.actionBtn} onPress={() => handleLike(postId)}>
                   <Ionicons
                     name={liked ? "heart" : "heart-outline"}
                     size={20}
                     color={liked ? "#e74c3c" : "#888"}
                   />
                   <Text style={[styles.actionText, liked && { color: "#e74c3c" }]}>
-                    {likeCount + (liked ? 1 : 0)}
+                    {likeCount}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionBtn}>
                   <Ionicons name="chatbubble-outline" size={20} color="#888" />
-                  <Text style={styles.actionText}>{post.comments}</Text>
+                  <Text style={styles.actionText}>{post.commentCount ?? 0}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionBtn}>
                   <Ionicons name="share-social-outline" size={20} color="#888" />

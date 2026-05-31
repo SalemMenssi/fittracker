@@ -95,7 +95,6 @@ export default function ProfileScreen({ navigation }) {
     { icon: 'podium-outline', label: 'Leaderboard', screen: ROUTES.LEADERBOARD, color: '#333' },
     { icon: 'people-outline', label: 'Social Feed', screen: ROUTES.SOCIAL, color: '#333' },
     { icon: 'fitness-outline', label: 'Activity Tracker', screen: ROUTES.WORKOUTS, color: '#333' },
-    { icon: 'document-text-outline', label: 'Terms of Service', screen: ROUTES.TERMS, color: '#333' },
   ];
 
   // Top 3 achievements to display
