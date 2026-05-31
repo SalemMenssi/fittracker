@@ -133,27 +133,44 @@ const parseQuestJson = (text) => {
   return JSON.parse(cleaned.slice(start, end + 1));
 };
 
-const generateAIContent = async (prompt, raw = true) => {
+const GEMINI_MODELS = [
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-2.0-flash",
+];
+const GEMINI_API_VERSIONS = ["v1beta", "v1"];
+
+const generateAIContent = async (prompt, rawOrOptions = true) => {
   if (typeof fetch !== "function") {
     throw new Error("Server fetch API unavailable");
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const options =
+    typeof rawOrOptions === "object"
+      ? rawOrOptions
+      : { raw: !!rawOrOptions };
+  const { raw = true, allowFallback = true, systemInstruction } = options;
+
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
+    if (!allowFallback) throw new Error("GEMINI_API_KEY is not configured on the server.");
     return { text: JSON.stringify(buildDailyQuestFallback()), modelUsed: "free-local-fallback" };
   }
 
+  const userText = raw ? `Return ONLY valid JSON with no markdown.\n\n${prompt}` : prompt;
   const payload = {
-    contents: [{ role: "user", parts: [{ text: raw ? `Return ONLY valid JSON with no markdown.\n\n${prompt}` : prompt }] }],
+    contents: [{ role: "user", parts: [{ text: userText }] }],
+    ...(systemInstruction
+      ? { systemInstruction: { parts: [{ text: systemInstruction }] } }
+      : {}),
     generationConfig: raw ? { responseMimeType: "application/json" } : undefined,
   };
 
-  const modelsToTry = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash", "gemini-2.0-flash"];
-  const apiVersions = ["v1beta", "v1"];
   let lastError = "Gemini request failed";
 
-  for (const version of apiVersions) {
-    for (const model of modelsToTry) {
+  for (const version of GEMINI_API_VERSIONS) {
+    for (const model of GEMINI_MODELS) {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${apiKey}`,
         { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }
@@ -163,12 +180,35 @@ const generateAIContent = async (prompt, raw = true) => {
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
         return { text, modelUsed: model, apiVersion: version };
       }
+
       lastError = data?.error?.message || lastError;
-      if (!String(lastError).toLowerCase().includes("not found")) break;
+      const errLower = String(lastError).toLowerCase();
+
+      if (response.status === 401 || response.status === 403) {
+        if (!allowFallback) throw new Error(lastError);
+        break;
+      }
+
+      const retryable =
+        errLower.includes("not found") ||
+        errLower.includes("quota") ||
+        errLower.includes("rate limit") ||
+        errLower.includes("resource exhausted");
+
+      if (!retryable) {
+        if (!allowFallback) throw new Error(lastError);
+        break;
+      }
     }
   }
 
-  return { text: JSON.stringify(buildDailyQuestFallback()), modelUsed: "free-local-fallback", note: lastError };
+  if (!allowFallback) throw new Error(lastError);
+
+  return {
+    text: JSON.stringify(buildDailyQuestFallback()),
+    modelUsed: "free-local-fallback",
+    note: lastError,
+  };
 };
 
 const generateDailyQuestData = async (profile) => {

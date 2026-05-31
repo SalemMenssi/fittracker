@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -61,6 +62,11 @@ export default function SignUpScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.back}>‹</Text>
           </TouchableOpacity>
+          <Image
+            source={require("../../../assets/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
           <Text style={styles.headerTitle}>Create account</Text>
 
           {/* Title */}
@@ -206,11 +212,16 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 4,
   },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 8,
+  },
   headerTitle: {
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: -30,
     marginBottom: 24,
     color: "#111",
   },

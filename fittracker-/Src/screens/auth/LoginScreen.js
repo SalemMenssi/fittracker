@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -58,7 +59,11 @@ const Loginscreen = () => {
         style={{ width: "100%", alignItems: "center" }}
       >
         {/* Logo */}
-        <View style={styles.logo} />
+        <Image
+          source={require("../../../assets/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.appName}>FitTrack</Text>
 
         {/* Card */}
@@ -158,10 +163,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   logo: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: "#00c2c2",
+    width: 120,
+    height: 120,
   },
   appName: {
     marginTop: 10,
