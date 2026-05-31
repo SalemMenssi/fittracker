@@ -16,14 +16,15 @@ export const getAvatarTier = (level = 1) => {
   return 1;
 };
 
-export const resolveHunterClass = ({ level = 1, joinedCategories = [], completedChallenges = 0 }) => {
-  if (level < 3) return "Shadow Trainee";
+export const resolveHunterClass = ({ classType, level = 1, joinedCategories = [], completedChallenges = 0 }) => {
+  if (classType) return classType;
+  if (level < 3) return "Balanced Hunter";
   if (joinedCategories.includes("Fitness")) return "Strength Fighter";
-  if (joinedCategories.includes("Mental Focus") || joinedCategories.includes("Study")) return "Focus Mage";
-  if (joinedCategories.includes("Health")) return "Health Guardian";
-  if (joinedCategories.includes("Productivity")) return "Productivity Assassin";
-  if (completedChallenges >= 3) return "Discipline Hunter";
-  return "Discipline Hunter";
+  if (joinedCategories.includes("Mental Focus") || joinedCategories.includes("Study")) return "Logic Mage";
+  if (joinedCategories.includes("Health")) return "Nature Ranger";
+  if (joinedCategories.includes("Productivity")) return "Inner Shadow";
+  if (completedChallenges >= 3) return "Social Leader";
+  return "Balanced Hunter";
 };
 
 export const getExpToLevel = (xp = 0) => ({ current: xp, max: 100 });

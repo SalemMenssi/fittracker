@@ -12,6 +12,12 @@ const postRoutes = require('./Routes/postRoutes');
 const uploadRoutes = require('./Routes/uploadRoutes');
 const challengeRoutes = require('./Routes/challengeRoutes');
 const systemRoutes = require('./Routes/systemRoutes');
+const dailyQuestRoutes = require('./Routes/dailyQuestRoutes');
+const intelligenceRoutes = require('./Routes/intelligenceRoutes');
+const marketplaceRoutes = require('./Routes/marketplaceRoutes');
+const notificationRoutes = require('./Routes/notificationRoutes');
+const statHistoryRoutes = require('./Routes/statHistoryRoutes');
+const testRoutes = require('./Routes/testRoutes');
 
 dotenv.config();
 
@@ -32,6 +38,12 @@ app.use('/api/posts', postRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/system', systemRoutes);
+app.use('/api/daily-quests', dailyQuestRoutes);
+app.use('/api/intelligence', intelligenceRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/stats', statHistoryRoutes);
+app.use('/api/tests', testRoutes);
 
 // Static folders
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));

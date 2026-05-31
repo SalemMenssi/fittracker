@@ -8,7 +8,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "data:import": "node seeder.js"
+    "data:import": "node seeder.js",
+    "data:destroy": "node seeder.js -d",
+    "seed": "node seeder.js",
+    "migrate:onboarding": "node scripts/markExistingUsersOnboarded.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

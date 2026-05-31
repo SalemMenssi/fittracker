@@ -7,12 +7,13 @@
     "start:backend": "cd backend && npm run dev",
     "start:fittracker": "cd fittracker- && npm start",
     "dev": "concurrently -n BACKEND,EXPO -c green,blue \"npm run start:backend\" \"npm run start:fittracker\"",
-    "seed": "cd backend && npm run data:import"
+    "seed": "cd backend && npm run data:import",
+    "migrate:onboarding": "cd backend && npm run migrate:onboarding"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "expo": "^55.0.25"
+    "expo": "~55.0.26"
   }
 }

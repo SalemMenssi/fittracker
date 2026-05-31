@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "./config";
 import { getCurrentUser, updateUser } from "./AuthService";
+import { completeTest as completeTestApi } from "./TestService";
 import { resolveHunterClass, resolveRankByLevel, getAvatarTier } from "./SystemService";
 
 const TOKEN_KEY = "@fittracker_token";
@@ -65,28 +66,38 @@ export const updateStatsFromQuiz = async (results, testId = null) => {
         const user = await getPerformanceMetrics();
         if (!user) return null;
 
-        // Skip if test already done
-        if (testId && user.completedTests?.includes(testId)) {
-            return user;
+        const already = (user.completedTests || []).some(
+          (t) => (typeof t === 'string' ? t : t.testId) === testId
+        );
+        if (testId && already) {
+            return { user, unlockedBadges: [], xpReward: 0, score: 0 };
         }
 
-        let updatedStats = { ...user.stats };
+        const correct = results.filter((r) => r.isCorrect).length;
+        const score = Math.round((correct / Math.max(results.length, 1)) * 100);
+        const primaryStat = results[0]?.statType || 'discipline';
 
-        if (results && Array.isArray(results)) {
-            results.forEach(result => {
+        try {
+            const apiResult = await completeTestApi({
+                testId,
+                testType: primaryStat,
+                results,
+                score,
+            });
+            return apiResult;
+        } catch (apiErr) {
+            console.warn('Test API fallback to local update', apiErr.message);
+            let updatedStats = { ...user.stats };
+            results.forEach((result) => {
                 const statName = result.statType || result.stat;
                 if (statName && updatedStats[statName] !== undefined) {
                     updatedStats[statName] += result.isCorrect ? 2 : 1;
                 }
             });
+            const completedTests = [...(user.completedTests || []), { testId, score, date: new Date().toLocaleDateString() }];
+            const updated = await updateUser({ stats: updatedStats, completedTests });
+            return { user: updated, unlockedBadges: [], xpReward: 0, score };
         }
-
-        let completedTests = user.completedTests || [];
-        if (testId && !completedTests.includes(testId)) {
-            completedTests.push(testId);
-        }
-
-        return await updateUser({ stats: updatedStats, completedTests });
     } catch (error) {
         console.error("Error updating stats from quiz:", error);
         return await getCurrentUser();

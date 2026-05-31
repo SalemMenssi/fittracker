@@ -10,16 +10,42 @@ const askSystem = async (req, res) => {
 
     const buildFreeSystemReply = (input) => {
       const q = input.toLowerCase();
-      if (q.includes("study")) {
-        return "System: Daily Quest set. 1) 40-minute deep focus block, 2) 10-minute recall notes, 3) no social media until quest is complete. Reward: +30 EXP.";
+      const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+      if (q.includes('study') || q.includes('read') || q.includes('learn')) {
+        return pick([
+          'Daily Quest set: 40-minute deep focus block, 10-minute recall notes, no social media until complete. Reward: +30 EXP.',
+          'Scholar path unlocked: read 10 pages, summarize in 3 bullets, teach one idea to yourself out loud. Reward: +28 EXP.',
+          'Focus raid: one hard study block, one review pass, one practice question. Reward: +25 EXP.',
+        ]);
       }
-      if (q.includes("fitness") || q.includes("workout")) {
-        return "System: Hunter Conditioning Quest. 1) 3-round bodyweight circuit, 2) 10-minute mobility reset, 3) hydration check. Reward: +35 EXP.";
+      if (q.includes('fitness') || q.includes('workout') || q.includes('gym') || q.includes('exercise')) {
+        return pick([
+          'Hunter Conditioning Quest: 3-round bodyweight circuit, 10-minute mobility reset, hydration check. Reward: +35 EXP.',
+          'Body protocol: warm-up, strength block, cooldown stretch. Log reps before rest. Reward: +32 EXP.',
+          'Movement quest: 20 minutes activity + 5 minutes balance work. Reward: +30 EXP.',
+        ]);
       }
-      if (q.includes("productivity")) {
-        return "System: Productivity Raid. 1) Pick top 3 priority tasks, 2) finish the hardest one first, 3) ship one measurable result today. Reward: +25 EXP.";
+      if (q.includes('productivity') || q.includes('focus') || q.includes('task')) {
+        return pick([
+          'Productivity Raid: pick top 3 tasks, finish the hardest first, ship one measurable result today. Reward: +25 EXP.',
+          'Priority strike: one deep-work block, one admin sweep, one clear win before evening. Reward: +22 EXP.',
+          'Execution quest: define done, time-box 45 minutes, review outcome in 3 lines. Reward: +24 EXP.',
+        ]);
       }
-      return "System: Daily Quest activated. 1) Complete one high-focus task, 2) finish one health habit, 3) log your progress tonight. Reward: +20 EXP.";
+      if (q.includes('today') || q.includes('should i') || q.includes('what')) {
+        return pick([
+          'Start with one high-focus task, one health habit, and a short reflection tonight. Reward: +20 EXP.',
+          'Balance today: train body 15 minutes, sharpen mind 15 minutes, journal 5 minutes. Reward: +22 EXP.',
+          'Pick your weakest intelligence and do one small challenge for it today. Reward: +24 EXP.',
+        ]);
+      }
+      return pick([
+        'Complete one high-focus task, one health habit, and log progress tonight. Reward: +20 EXP.',
+        'Three-step quest: plan 5 minutes, execute 30 minutes, reflect 5 minutes. Reward: +20 EXP.',
+        'Small wins stack: one discipline action, one growth action, one recovery action. Reward: +22 EXP.',
+        'The System recommends one challenge outside your comfort zone today. Reward: +25 EXP.',
+      ]);
     };
     const buildFreeRawJson = (input) => {
       const q = String(input || "").toLowerCase();
@@ -61,7 +87,7 @@ const askSystem = async (req, res) => {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.json({ text: raw ? buildFreeRawJson(prompt) : `[Fallback] ${buildFreeSystemReply(prompt)}`, modelUsed: "free-local-fallback" });
+      return res.json({ text: raw ? buildFreeRawJson(prompt) : buildFreeSystemReply(prompt), modelUsed: 'free-local-fallback' });
     }
 
     const payload = {
@@ -101,7 +127,7 @@ const askSystem = async (req, res) => {
         const data = await response.json();
         if (response.ok) {
           const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "System response unavailable.";
-          return res.json({ text: raw ? text : `[Gemini:${model}] ${text}`, modelUsed: model, apiVersion: version });
+          return res.json({ text: raw ? text : text, modelUsed: model, apiVersion: version });
         }
 
         lastError = data?.error?.message || lastError;
@@ -110,13 +136,13 @@ const askSystem = async (req, res) => {
     }
 
     // Free fallback if external model fails
-    return res.json({ text: raw ? buildFreeRawJson(prompt) : `[Fallback] ${buildFreeSystemReply(prompt)}`, modelUsed: "free-local-fallback", note: lastError });
+    return res.json({ text: raw ? buildFreeRawJson(prompt) : buildFreeSystemReply(prompt), modelUsed: 'free-local-fallback', note: lastError });
   } catch (error) {
     const prompt = (req.body?.prompt || "").trim();
     const raw = !!req.body?.raw;
     const fallback = prompt
-      ? `System: Fallback mode active. Complete one main quest now, then one bonus quest before day end. Reward: +20 EXP.`
-      : "System: Fallback mode active. Set one focused quest and complete it before evening.";
+      ? 'Complete one main quest now, then one bonus quest before day end. Reward: +20 EXP.'
+      : 'Set one focused quest and complete it before evening.';
     const rawJson = JSON.stringify({
       title: "Fallback Routine",
       description: "Emergency autofill response",

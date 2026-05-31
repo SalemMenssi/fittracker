@@ -1,23 +1,40 @@
-import { Platform, Alert } from 'react-native';
+import {
+  savePushTokenToBackend,
+  removePushTokenFromBackend,
+  sendTestNotificationApi,
+} from './NotificationApiService';
 
-export const requestNotificationPermission = async () => {
-  console.log("Mock: requestNotificationPermission");
-  return true;
+const noop = async () => null;
+const noopVoid = async () => {};
+
+export const configureNotificationHandler = noopVoid;
+export const registerForPushNotificationsAsync = noop;
+export const requestNotificationPermission = noop;
+export const createAndroidNotificationChannel = noopVoid;
+export const scheduleLocalNotification = noop;
+export const scheduleDailyQuestReminder = noop;
+export const scheduleStreakProtectionNotification = noop;
+export const scheduleTaskNotification = noop;
+export const cancelNotification = noopVoid;
+export const cancelTaskNotification = noopVoid;
+export const cancelAllNotifications = noopVoid;
+
+export const sendTestNotification = async () => {
+  try {
+    return await sendTestNotificationApi();
+  } catch (e) {
+    return { sent: false, message: e.message || 'Push notifications are disabled on this build.' };
+  }
 };
 
-export const createAndroidNotificationChannel = async () => {
-  console.log("Mock: createAndroidNotificationChannel");
-};
+export const notifyDailyQuestReady = noop;
+export const notifyQuestProgress = noop;
+export const notifyDailyQuestComplete = noop;
+export const notifyBadgeUnlock = noop;
+export const notifyIntelligenceWeakness = noop;
+export const notifyLevelUp = noop;
+export const notifyAvatarEvolution = noop;
+export const notifyAiCoach = noop;
+export const notifyChallengeReminder = noop;
 
-export const scheduleTaskNotification = async (task) => {
-  console.log("Mock: scheduleTaskNotification", task);
-  return `mock-id-${Date.now()}`;
-};
-
-export const cancelTaskNotification = async (notificationId) => {
-  console.log("Mock: cancelTaskNotification", notificationId);
-};
-
-export const scheduleStreakProtectionNotification = async (tasks) => {
-  console.log("Mock: scheduleStreakProtectionNotification", tasks?.length);
-};
+export { savePushTokenToBackend, removePushTokenFromBackend };

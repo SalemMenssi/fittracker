@@ -137,6 +137,27 @@ const updateUserProfile = async (req, res) => {
       if (req.body.completedDailyTasks) user.completedDailyTasks = req.body.completedDailyTasks;
       if (req.body.joinedChallenges) user.joinedChallenges = req.body.joinedChallenges;
       if (req.body.completedChallenges) user.completedChallenges = req.body.completedChallenges;
+      if (req.body.intelligenceStats) user.intelligenceStats = { ...user.intelligenceStats?.toObject?.() || user.intelligenceStats || {}, ...req.body.intelligenceStats };
+      if (req.body.coreStats) user.coreStats = { ...user.coreStats?.toObject?.() || user.coreStats || {}, ...req.body.coreStats };
+      if (req.body.selectedDevelopmentFocus) user.selectedDevelopmentFocus = req.body.selectedDevelopmentFocus;
+      if (req.body.preferredQuestTypes) user.preferredQuestTypes = req.body.preferredQuestTypes;
+      if (req.body.availableDailyTime !== undefined) user.availableDailyTime = req.body.availableDailyTime;
+      if (req.body.availableEquipment) user.availableEquipment = req.body.availableEquipment;
+      if (req.body.fitnessGoal) user.fitnessGoal = req.body.fitnessGoal;
+      if (req.body.mentalGoal) user.mentalGoal = req.body.mentalGoal;
+      if (req.body.reminderTime) user.reminderTime = req.body.reminderTime;
+      if (req.body.onboardingComplete !== undefined) {
+        user.onboardingComplete = req.body.onboardingComplete;
+        user.hasCompletedOnboarding = req.body.onboardingComplete;
+      }
+      if (req.body.hasCompletedOnboarding !== undefined) {
+        user.hasCompletedOnboarding = req.body.hasCompletedOnboarding;
+        user.onboardingComplete = req.body.hasCompletedOnboarding;
+      }
+      if (req.body.coins !== undefined) user.coins = req.body.coins;
+      if (req.body.equippedAura) user.equippedAura = req.body.equippedAura;
+      if (req.body.equippedSkin) user.equippedSkin = req.body.equippedSkin;
+      if (req.body.inventory) user.inventory = req.body.inventory;
 
       const updatedUser = await user.save();
 

@@ -25,6 +25,13 @@ export const joinChallenge = async (id) => {
   return data;
 };
 
+export const completeChallenge = async (id) => {
+  const response = await fetch(`${API_URL}/challenges/${id}/complete`, { method: "POST", headers: await withAuth() });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Failed to complete challenge");
+  return data;
+};
+
 export const createChallenge = async (payload) => {
   const response = await fetch(`${API_URL}/challenges`, { method: "POST", headers: await withAuth(), body: JSON.stringify(payload) });
   const data = await response.json();
